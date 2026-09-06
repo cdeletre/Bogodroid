@@ -22,6 +22,8 @@ typedef struct
 
 } ANativeWindow;
 
+typedef struct AMediaExtractor AMediaExtractor;
+
 typedef struct
 {
 
@@ -30,5 +32,6 @@ typedef struct
 
 ABI_ATTR extern AConfiguration* AConfiguration_new();
 
+ABI_ATTR AMediaExtractor* AMediaExtractor_new();
 
 #endif /* __NDK_BRIDGE_H__ */

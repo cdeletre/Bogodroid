@@ -119,6 +119,11 @@ ABI_ATTR int32_t ANativeWindow_getHeight(ANativeWindow *window)
     return config["device"]["displayHeight"].value_or<int>(480);
 }
 
+ABI_ATTR AMediaExtractor* AMediaExtractor_new()
+{
+    return NULL;
+}
+
 ABI_ATTR void __assert2(const char* __file, int __line, const char* __function, const char* __msg)
 {
     fatal_error("ASSERT!! File: %s Line: %d Function: %s Message: %s\n",__file, __line, __function, __msg);
@@ -165,6 +170,7 @@ NO_THUNK("AAsset_getBuffer",(uintptr_t)&AAsset_getBuffer),
 NO_THUNK("AAsset_getLength",(uintptr_t)&AAsset_getLength),
 NO_THUNK("AAsset_close",(uintptr_t)&AAsset_close),
 NO_THUNK("AAsset_read", (uintptr_t)&AAsset_read),
+NO_THUNK("AMediaExtractor_new", (uintptr_t)&AMediaExtractor_new),
     {NULL, (uintptr_t)NULL}};
 
 
