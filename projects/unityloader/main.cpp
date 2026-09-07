@@ -216,6 +216,12 @@ int main(int argc, char* argv[])
             loaded_modules[module_count++] = mod;
         }
 
+        mod = (so_module*)calloc(1, sizeof(so_module));
+        if (mod && load_so_from_file(mod, "lib/arm64-v8a/libFirebaseCppApp-12_2_0.so", 0x425a000000)) {
+            printf("  Loaded: libFirebaseCppApp-12_2_0.so\n");
+            loaded_modules[module_count++] = mod;
+        }
+
         auto lemonBootJNI_OnLoad = (jint (*)(JavaVM* vm, void* reserved))(so_symbol(&lbootstrap, "JNI_OnLoad"));
         if (lemonBootJNI_OnLoad) {
             printf("calling JNI_OnLoad from libBootstrap.so\n");
