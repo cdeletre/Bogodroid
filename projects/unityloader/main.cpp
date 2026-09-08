@@ -216,12 +216,6 @@ int main(int argc, char* argv[])
             loaded_modules[module_count++] = mod;
         }
 
-        mod = (so_module*)calloc(1, sizeof(so_module));
-        if (mod && load_so_from_file(mod, "lib/arm64-v8a/libFirebaseCppApp-12_2_0.so", 0x425a000000)) {
-            printf("  Loaded: libFirebaseCppApp-12_2_0.so\n");
-            loaded_modules[module_count++] = mod;
-        }
-
         auto lemonBootJNI_OnLoad = (jint (*)(JavaVM* vm, void* reserved))(so_symbol(&lbootstrap, "JNI_OnLoad"));
         if (lemonBootJNI_OnLoad) {
             printf("calling JNI_OnLoad from libBootstrap.so\n");
@@ -304,6 +298,15 @@ int main(int argc, char* argv[])
     }
     loaded_modules[module_count++] = &lhelpers;
 
+    printf("Loading libFirebaseCppApp\n");
+    so_module lfirebase = {};
+    uintptr_t addr_lfirebase = 0x4400000000;
+    const char* path_lfirebase = "lib/arm64-v8a/libFirebaseCppApp-12_2_0.so";
+    if (!load_so_from_file(&lfirebase, path_lfirebase, addr_lfirebase)) {
+        printf("No libFirebase found\n");
+    }
+    loaded_modules[module_count++] = &lfirebase;
+
     const char* directory = "assets/bin/Data/Managed/";
     DIR* d = opendir(directory);
     if (!d) {
@@ -362,6 +365,13 @@ int main(int argc, char* argv[])
         printf("calling JNI_OnLoad from libunity.so\n");
         std::cout << &unityJNI_OnLoad << std::endl;
         unityJNI_OnLoad(&vm, nullptr);
+    }
+
+    auto firebase_OnLoad = (jint (*)(JavaVM* vm, void* reserved))(so_symbol(&lfirebase, "JNI_OnLoad"));
+    if (firebase_OnLoad) {
+        printf("calling JNI_OnLoad from libFirebaseCppApp-12_2_0.so\n");
+        std::cout << &firebase_OnLoad << std::endl;
+        firebase_OnLoad(&vm, nullptr);
     }
 
     backend.setKeyCallback([unityActivity](std::shared_ptr<jnivm::android::view::KeyEvent> event) {
